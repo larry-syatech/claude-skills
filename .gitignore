@@ -1,0 +1,33 @@
+# Operating System
+.DS_Store
+Thumbs.db
+
+# Editor
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Temporary files
+*.tmp
+.summary
+
+# Build artifacts (if skills include compiled components)
+*.o
+*.exe
+*.dll
+*.so
+*.dylib
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+*.egg-info/
+
+# Node
+node_modules/
+npm-debug.log
+yarn-error.log
