@@ -49,6 +49,64 @@ if [ ! -f "$UNIX_IDF_PATH/export.ps1" ]; then
     exit 1
 fi
 
+# Determine IDF_TOOLS_PATH (where install.ps1 puts tools and python venv)
+# Priority: 1. IDF_TOOLS_PATH environment variable, 2. Default ~/.espressif
+if [ -n "$IDF_TOOLS_PATH" ]; then
+    UNIX_IDF_TOOLS_PATH="$IDF_TOOLS_PATH"
+else
+    # Convert Windows path to Unix path if needed
+    WIN_USERNAME="${USERNAME:-${USER}}"
+    UNIX_IDF_TOOLS_PATH="/c/Users/${WIN_USERNAME}/.espressif"
+fi
+
+# Verify install.ps1 has been run by checking for key markers
+IDF_ENV_JSON="$UNIX_IDF_TOOLS_PATH/idf-env.json"
+PYTHON_ENV_DIR="$UNIX_IDF_TOOLS_PATH/python_env"
+TOOLS_DIR="$UNIX_IDF_TOOLS_PATH/tools"
+
+if [ ! -f "$IDF_ENV_JSON" ]; then
+    echo "ERROR: ESP-IDF installation incomplete - idf-env.json not found"
+    echo ""
+    echo "Expected location: $IDF_ENV_JSON"
+    echo ""
+    echo "This indicates that install.ps1 (or install.bat) has not been run."
+    echo ""
+    echo "To fix this, run the following in PowerShell:"
+    echo "  cd '$WIN_IDF_PATH'"
+    echo "  .\\install.ps1"
+    echo ""
+    echo "Or install for specific targets:"
+    echo "  .\\install.ps1 esp32,esp32c6"
+    echo ""
+    exit 1
+fi
+
+if [ ! -d "$PYTHON_ENV_DIR" ]; then
+    echo "ERROR: Python virtual environment not found"
+    echo ""
+    echo "Expected location: $PYTHON_ENV_DIR"
+    echo ""
+    echo "This indicates install.ps1 did not complete successfully."
+    echo "Please run install.ps1 in PowerShell:"
+    echo "  cd '$WIN_IDF_PATH'"
+    echo "  .\\install.ps1"
+    echo ""
+    exit 1
+fi
+
+if [ ! -d "$TOOLS_DIR" ]; then
+    echo "ERROR: ESP-IDF tools directory not found"
+    echo ""
+    echo "Expected location: $TOOLS_DIR"
+    echo ""
+    echo "This indicates install.ps1 did not complete successfully."
+    echo "Please run install.ps1 in PowerShell:"
+    echo "  cd '$WIN_IDF_PATH'"
+    echo "  .\\install.ps1"
+    echo ""
+    exit 1
+fi
+
 # Build the idf.py command from all arguments
 IDF_COMMAND="idf.py $*"
 

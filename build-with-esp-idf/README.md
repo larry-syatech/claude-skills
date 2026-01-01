@@ -1,6 +1,6 @@
 # build-with-esp-idf Skill
 
-A Claude Code skill for configuring and building ESP-IDF projects on Windows using Git Bash/MSYS environments.
+A Claude Code skill for configuring and building ESP-IDF projects from within Claude Code or other environments that use Git Bash/MSYS, which is not supported by ESP-IDF version 5+.
 
 ## What This Skill Does
 
@@ -132,6 +132,23 @@ You can customize this skill for your team:
 - [ESP-IDF Documentation](https://docs.espressif.com/projects/esp-idf/)
 - [Claude Code Skills Documentation](https://code.claude.com/docs/en/skills.md)
 - [ESP-IDF Windows Setup](https://docs.espressif.com/projects/esp-idf/en/stable/esp32/get-started/windows-setup.html)
+
+## Testing
+
+This skill includes a comprehensive automated test suite to validate correct configuration:
+
+```bash
+# Run all tests
+./tests/run-all-tests.sh
+
+# Run individual test suites
+./tests/test-idf-wrapper.sh      # Test idf.sh wrapper
+./tests/test-verify-setup.sh     # Test verification script
+```
+
+**Current Status**: ✅ All 69 assertions across 23 test cases passing
+
+See `tests/README.md` and `tests/TEST-SUMMARY.md` for detailed test documentation.
 
 ## Version
 

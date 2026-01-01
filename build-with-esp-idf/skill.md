@@ -1,6 +1,6 @@
 ---
 name: build-with-esp-idf
-description: Configures and builds ESP-IDF projects on Windows using Git Bash/MSYS. Use when setting up ESP32/ESP32-C6 projects, running idf.py commands, building firmware, flashing devices, or troubleshooting ESP-IDF builds on Windows where MSYS/Mingw environments are not officially supported.
+description: Configures and builds ESP-IDF projects from within Claude Code or other environments that use Git Bash/MSYS. Use when setting up ESP32/ESP32-C6 projects, running idf.py commands, building firmware, flashing devices, or troubleshooting ESP-IDF builds on Windows where MSYS/Mingw environments are not officially supported.
 allowed-tools: Bash, Read, Write, Edit, Glob, Grep
 ---
 
@@ -83,12 +83,35 @@ When configuring a new ESP-IDF project to work with Claude Code, follow these st
 
 ### Step 1: Verify ESP-IDF Installation
 
-Check that ESP-IDF is installed and the export script exists:
+Check that ESP-IDF is installed and that `install.ps1` has been run:
 
 ```bash
-# Default ESP-IDF installation path (adjust if different)
+# Check that export.ps1 exists
 ls "C:\Users\Larry\esp\v5.5.1\esp-idf\export.ps1"
+
+# Check that install.ps1 has been run (creates .espressif directory with tools)
+ls "$HOME/.espressif/idf-env.json"
 ```
+
+**CRITICAL:** ESP-IDF requires running `install.ps1` (or `install.bat`) before first use to:
+- Download and install toolchain binaries (compilers, debuggers, etc.)
+- Create Python virtual environment with required packages
+- Configure the environment for your target chips
+
+If `idf-env.json` doesn't exist, run this in PowerShell:
+
+```powershell
+# Navigate to your ESP-IDF installation
+cd C:\Users\Larry\esp\v5.5.1\esp-idf
+
+# Install for all targets (recommended)
+.\install.ps1
+
+# OR install for specific targets only
+.\install.ps1 esp32,esp32c6
+```
+
+This only needs to be done once per ESP-IDF installation, not per project.
 
 ### Step 2: Create the `idf.sh` Wrapper Script
 
@@ -174,6 +197,32 @@ If you see "running scripts is disabled on this system", run this in PowerShell 
 ```powershell
 Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
 ```
+
+### Error: "idf-env.json not found" or "Python virtual environment not found"
+
+This means `install.ps1` has not been run. ESP-IDF requires a one-time installation step per ESP-IDF version:
+
+```powershell
+# In PowerShell, navigate to ESP-IDF installation
+cd C:\Users\YourUsername\esp\v5.5.1\esp-idf
+
+# Run install script (only needed once)
+.\install.ps1
+
+# Or for specific targets
+.\install.ps1 esp32,esp32c6
+```
+
+This creates:
+- `%USERPROFILE%\.espressif\idf-env.json` - Installation configuration
+- `%USERPROFILE%\.espressif\python_env\` - Python virtual environment
+- `%USERPROFILE%\.espressif\tools\` - Toolchain binaries (compilers, etc.)
+
+The `idf.sh` wrapper will now detect these and verify installation before running.
+
+### Build Fails with "The term 'idf.py' is not recognized"
+
+This also indicates `install.ps1` hasn't been run, or the installation is incomplete. Follow the steps above.
 
 ### Build Fails with "Unknown Tool"
 

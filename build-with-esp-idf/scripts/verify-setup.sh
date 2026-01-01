@@ -191,7 +191,107 @@ else
 fi
 
 echo ""
-echo "5. Testing idf.sh functionality..."
+echo "5. Checking ESP-IDF installation (install.ps1)..."
+echo "----------------------------------------"
+
+# Determine IDF_TOOLS_PATH (where install.ps1 installs tools)
+if [ -n "$IDF_TOOLS_PATH" ]; then
+    UNIX_IDF_TOOLS_PATH="$IDF_TOOLS_PATH"
+else
+    WIN_USERNAME="${USERNAME:-${USER}}"
+    UNIX_IDF_TOOLS_PATH="/c/Users/${WIN_USERNAME}/.espressif"
+fi
+
+WIN_IDF_TOOLS_PATH=$(cygpath -w "$UNIX_IDF_TOOLS_PATH" 2>/dev/null || echo "$UNIX_IDF_TOOLS_PATH")
+
+echo "Checking IDF_TOOLS_PATH: $UNIX_IDF_TOOLS_PATH"
+
+# Check for idf-env.json (primary marker that install.ps1 has been run)
+IDF_ENV_JSON="$UNIX_IDF_TOOLS_PATH/idf-env.json"
+if [ -f "$IDF_ENV_JSON" ]; then
+    print_ok "idf-env.json found (install.ps1 has been run)"
+
+    # Show installed targets/features
+    if command -v python3 &> /dev/null || command -v python &> /dev/null; then
+        PYTHON_CMD=$(command -v python3 || command -v python)
+        TARGETS=$($PYTHON_CMD -c "import json; data=json.load(open('$IDF_ENV_JSON')); print(','.join(data.get('targets', [])))" 2>/dev/null || echo "unknown")
+        if [ "$TARGETS" != "unknown" ] && [ -n "$TARGETS" ]; then
+            print_ok "Installed targets: $TARGETS"
+        fi
+    fi
+else
+    print_error "idf-env.json not found - install.ps1 has not been run"
+    echo "         Expected: $IDF_ENV_JSON"
+    echo ""
+    echo "         To fix, run in PowerShell:"
+
+    # Determine ESP-IDF path for the error message
+    if [ -n "$IDF_PATH" ]; then
+        WIN_IDF_PATH=$(cygpath -w "$IDF_PATH" 2>/dev/null || echo "$IDF_PATH")
+    else
+        WIN_USERNAME="${USERNAME:-${USER}}"
+        WIN_IDF_PATH="C:\\Users\\${WIN_USERNAME}\\esp\\esp-idf"
+    fi
+
+    echo "           cd '$WIN_IDF_PATH'"
+    echo "           .\\install.ps1"
+    echo ""
+    echo "         Or for specific targets:"
+    echo "           .\\install.ps1 esp32,esp32c6"
+fi
+
+# Check for Python virtual environment
+PYTHON_ENV_DIR="$UNIX_IDF_TOOLS_PATH/python_env"
+if [ -d "$PYTHON_ENV_DIR" ]; then
+    print_ok "Python virtual environment directory exists"
+
+    # Check for at least one venv (idf*_py*_env pattern)
+    VENV_COUNT=$(find "$PYTHON_ENV_DIR" -maxdepth 1 -type d -name "idf*_py*_env" 2>/dev/null | wc -l)
+    if [ "$VENV_COUNT" -gt 0 ]; then
+        print_ok "Found $VENV_COUNT Python virtual environment(s)"
+
+        # List the venvs
+        for venv in "$PYTHON_ENV_DIR"/idf*_py*_env; do
+            if [ -d "$venv" ]; then
+                VENV_NAME=$(basename "$venv")
+
+                # Check for idf_version.txt marker
+                if [ -f "$venv/idf_version.txt" ]; then
+                    IDF_VER=$(cat "$venv/idf_version.txt" 2>/dev/null || echo "unknown")
+                    print_ok "  - $VENV_NAME (ESP-IDF v$IDF_VER)"
+                else
+                    print_ok "  - $VENV_NAME"
+                fi
+            fi
+        done
+    else
+        print_warning "Python environment directory exists but no venvs found"
+        echo "         install.ps1 may not have completed successfully"
+    fi
+else
+    print_error "Python virtual environment directory not found"
+    echo "         Expected: $PYTHON_ENV_DIR"
+    echo "         This indicates install.ps1 has not been run or failed"
+fi
+
+# Check for tools directory
+TOOLS_DIR="$UNIX_IDF_TOOLS_PATH/tools"
+if [ -d "$TOOLS_DIR" ]; then
+    # Count installed tools
+    TOOL_COUNT=$(find "$TOOLS_DIR" -maxdepth 1 -type d ! -name "tools" 2>/dev/null | wc -l)
+    if [ "$TOOL_COUNT" -gt 0 ]; then
+        print_ok "ESP-IDF tools directory exists with $TOOL_COUNT tool(s) installed"
+    else
+        print_warning "Tools directory exists but appears empty"
+    fi
+else
+    print_error "ESP-IDF tools directory not found"
+    echo "         Expected: $TOOLS_DIR"
+    echo "         This indicates install.ps1 has not been run or failed"
+fi
+
+echo ""
+echo "6. Testing idf.sh functionality..."
 echo "----------------------------------------"
 
 if [ -f "./idf.sh" ] && [ -x "./idf.sh" ]; then

@@ -1,4 +1,4 @@
-# SyaTech Claude Code Skills
+# Claude Code Skills
 
 A collection of custom skills for [Claude Code](https://claude.com/claude-code) to enhance development workflows.
 
