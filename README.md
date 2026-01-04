@@ -26,6 +26,25 @@ Skills are custom instructions that extend Claude Code's capabilities for specif
 
 **Documentation**: [build-with-esp-idf/README.md](build-with-esp-idf/README.md)
 
+### deep-research
+
+**Purpose**: Provides guidance for conducting thorough, well-documented research across codebases, web resources, and technical problem domains.
+
+**Use when**:
+- Researching a topic, technology, or concept
+- Investigating issues, bugs, or system behavior
+- Deep diving into unfamiliar codebases
+- Learning about new technologies or best practices
+
+**Key Features**:
+- Core research principles (verify, breadth-then-depth, know when to stop)
+- Structured approaches for codebase, web, and problem-solving research
+- Source citation guidance
+- Critical analysis framework
+- Read-only tools to prevent accidental modifications
+
+**Documentation**: [deep-research/README.md](deep-research/README.md)
+
 ---
 
 ## Installation
