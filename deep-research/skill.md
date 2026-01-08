@@ -5,6 +5,7 @@ description: |
   code/architecture exploration, and technical problem solving. Use when asked to perform 
   a deep dive, deep research, or deep investigation on a codebase, search, issue, or problem, 
   or when asked to learn about or teach the user about a concept, technology, or codebase.
+context: fork
 allowed-tools: Read, Grep, Glob, WebFetch, WebSearch, Task
 ---
 
