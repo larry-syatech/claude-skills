@@ -167,6 +167,8 @@ See BUILD-CLAUDE-CODE.md for details.
 
 Optionally create `BUILD-CLAUDE-CODE.md` with detailed setup instructions (see `WINDOWS-SETUP.md` in this skill for a template).
 
+Add the `build-claude` folder to the .gitignore file if the project uses git.
+
 ## Troubleshooting
 
 ### Permission Denied on `idf.sh`
