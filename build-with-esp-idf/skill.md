@@ -1,6 +1,6 @@
 ---
 name: build-with-esp-idf
-description: Configures and builds ESP-IDF projects from within Claude Code or other environments that use Git Bash/MSYS. Use when setting up ESP32/ESP32-C6 projects, running idf.py commands, building firmware, flashing devices, or troubleshooting ESP-IDF builds on Windows where MSYS/Mingw environments are not officially supported.
+description: Configures and builds ESP-IDF projects from within Claude Code or other environments that use Git Bash/MSYS. Use when setting up ESP-IDF based ESP32/ESP32-C6 projects, running idf.py commands, building firmware, flashing devices, or troubleshooting ESP-IDF builds on Windows where MSYS/Mingw environments are not officially supported.  Not for use with PlatformIO projects.
 allowed-tools: Bash, Read, Write, Edit, Glob, Grep
 ---
 
@@ -19,7 +19,7 @@ of the documentation to set up a supported environment
 
 ## The Solution
 
-Use an `idf.sh` wrapper script that invokes PowerShell with a clean environment (MSYS variables removed) to run `idf.py` commands.
+Use an `idf.sh` wrapper script that invokes PowerShell with a clean environment (MSYS variables removed) to run `idf.py` commands.  Note that this skill works only with ESP-IDF builds, and not PlatformIO builds.
 
 ## Key Rules for ESP-IDF Projects with Claude Code
 
